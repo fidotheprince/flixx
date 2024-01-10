@@ -1,6 +1,12 @@
+import config from "./config.js";
+
+console.log(config);
+
 const global = {
     currentPage : window.location.pathname,
 };
+
+//Fetch data from TMBD API
 
 //Inserts active class corresponding to existing declared css class
 const highLightActiveLink = () => {
