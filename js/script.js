@@ -1,12 +1,22 @@
 import config from "./config.js";
 
-console.log(config);
-
 const global = {
     currentPage : window.location.pathname,
 };
 
 //Fetch data from TMBD API
+const fetchFromTMBD = async (endpoint) => {
+    const options = {
+        method: 'GET',
+        headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${config.ACCESS_TOKEN_AUTH}`,
+        }
+    }
+    const resp = await fetch(`${config.API_URL}${endpoint}/changes?page=1`, options);
+    const data = await resp.json();
+}
+
 
 //Inserts active class corresponding to existing declared css class
 const highLightActiveLink = () => {
@@ -46,6 +56,9 @@ const init = () => {
 
     //HighLight Active Link
     highLightActiveLink();
+
+    //Fetch data from TMBD API
+    fetchFromTMBD('movie');
 }
 
 //DOM Loaded
