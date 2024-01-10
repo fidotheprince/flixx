@@ -6,17 +6,51 @@ const global = {
 
 //Fetch data from TMBD API
 const fetchFromTMBD = async (endpoint) => {
-    const options = {
-        method: 'GET',
-        headers: {
-            accept: 'application/json',
-            Authorization: `Bearer ${config.ACCESS_TOKEN_AUTH}`,
-        }
+
+    const fetchTypes = {
+        popular: fetch(`${config.API_URL}${endpoint}?api_key=${config.API_KEY}&language=en-US`),
     }
-    const resp = await fetch(`${config.API_URL}${endpoint}/changes?page=1`, options);
+    const category = endpoint.split('/')[1]; 
+    const resp = await fetchTypes[category];
     const data = await resp.json();
+    return data;
+
 }
 
+const date = timeStamp => new Date(timeStamp).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' });
+
+const renderMovies = async () => {
+    const { results } = await fetchFromTMBD('movie/popular');
+    const parent = document.querySelector('#popular-movies');
+
+    results.forEach(movie => {
+        console.log(movie)
+        const parent = document.querySelector('#popular-movies');
+        const child = document.createElement('div');
+        child.classList.add('card');
+        const cardBody = `
+            <div class="card">
+                <a href="movie-details.html?id=1">
+                <img
+                    src="images/no-image.jpg"
+                    class="card-img-top"
+                    alt="Movie Title"
+                />
+                </a>
+                <div class="card-body">
+                <h5 class="card-title">${movie.title}</h5>
+                <p class="card-text">
+                    <small class="text-muted">Release: ${date(movie.release_date)}</small>
+                </p>
+            </div>
+        `;
+
+        child.innerHTML += cardBody;
+
+        parent.appendChild(child);
+
+    });
+}
 
 //Inserts active class corresponding to existing declared css class
 const highLightActiveLink = () => {
@@ -38,7 +72,8 @@ const init = () => {
     switch (global.currentPage) {
         case '/':
         case '/index.html':
-            console.log('Home Page');
+            fetchFromTMBD('movie/popular');
+            renderMovies();
             break;
         case '/shows.html':
             console.log('Shows Page');
@@ -56,9 +91,6 @@ const init = () => {
 
     //HighLight Active Link
     highLightActiveLink();
-
-    //Fetch data from TMBD API
-    fetchFromTMBD('movie');
 }
 
 //DOM Loaded
