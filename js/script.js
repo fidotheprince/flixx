@@ -21,18 +21,19 @@ const date = timeStamp => new Date(timeStamp).toLocaleDateString("en-US", { year
 
 const renderMovies = async () => {
     const { results } = await fetchFromTMBD('movie/popular');
-    const parent = document.querySelector('#popular-movies');
 
     results.forEach(movie => {
-        console.log(movie)
         const parent = document.querySelector('#popular-movies');
         const child = document.createElement('div');
+        const src = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'images/no-image.jpg';
+        
         child.classList.add('card');
+        
         const cardBody = `
             <div class="card">
-                <a href="movie-details.html?id=1">
+                <a href="movie-details.html?id=${movie.id}">
                 <img
-                    src="images/no-image.jpg"
+                    src=${src}
                     class="card-img-top"
                     alt="Movie Title"
                 />
@@ -46,7 +47,6 @@ const renderMovies = async () => {
         `;
 
         child.innerHTML += cardBody;
-
         parent.appendChild(child);
 
     });
