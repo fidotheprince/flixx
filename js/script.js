@@ -1,6 +1,7 @@
 import config from "./config.js";
 import showCard from "./components/ShowCard.js";
 import movieCard from "./components/MovieCard.js";
+import detailsBody from "./components/DetailsBody.js";
 
 const global = {
     currentPage : window.location.pathname,
@@ -67,60 +68,31 @@ const displayMovieDetails = async (endpoint) => {
         const queryString = `${config.API_URL}${endpoint}/${id}?api_key=${config.API_KEY}&language=en-US`
         const resp = await fetch(queryString)
         const details = await resp.json();
-        console.log(details);
+        
         const src = details.poster_path ? `https://image.tmdb.org/t/p/w500${details.poster_path}` : 'images/no-image.jpg';
         const parent = document.querySelector('#movie-details');
         const child = document.createElement('div');
         const ul = document.createElement('ul');
         ul.classList.add('list-group');
         
-        details.genres.forEach(genre => {
-            const li = document.createElement('li');
-            li.innerHTML = genre.name;
-            ul.appendChild(li);
-        });
-
-        const genres = ul.innerHTML;
+        const genres = details.genres.map(genre => `<li>${genre.name}</li>`).join('');
         const companies = details.production_companies.map(company => ` ${company.name}`);
 
-        const detailsBody = `
-            <div class="details-top">
-                <div>
-                    <img
-                        src=${src}
-                        class="card-img-top"
-                        alt="Movie Title"
-                    />
-                </div>
-                <div>
-                    <h2>${details.original_title}</h2>
-                    <p>
-                        <i class="fas fa-star text-primary"></i>
-                        ${details.vote_average.toFixed(1)} / 10
-                    </p>
-                    <p class="text-muted">Release Date: ${details.release_date}</p>
-                    <p>
-                        ${details.overview} / 10
-                    </p>
-                    <h5>Genres</h5>
-                    ${genres}
-                    <a href=${details.homepage} target="_blank" class="btn">Visit Movie Homepage</a>
-                    </div>
-                </div>
-            <div class="details-bottom">
-                <h2>Movie Info</h2>
-                <ul>
-                <li><span class="text-secondary">Budget:</span> ${details.budget}</li>
-                <li><span class="text-secondary">Revenue:</span> ${details.revenue}</li>
-                <li><span class="text-secondary">${details.revenue < details.budget ? 'Loss:' : 'Proft:'}</span> ${details.revenue - details.budget}</li>
-                <li><span class="text-secondary">Runtime:</span> ${details.runtime}</li>
-                <li><span class="text-secondary">Status:</span> ${details.status}</li>
-                </ul>
-                <h4>Production Companies</h4>
-                <div class="list-group">${companies}</div>
-            </div>
-        `
-        child.innerHTML += detailsBody;
+        child.innerHTML += detailsBody(
+            src, 
+            details.original_title, 
+            details.release_date, 
+            details.vote_average, 
+            details.overview, 
+            genres, 
+            details.homepage, 
+            details.budget, 
+            details.revenue, 
+            details.runtime, 
+            details.status, 
+            companies
+        );
+
         parent.appendChild(child);
     } catch (error) {
         console.error(error);
