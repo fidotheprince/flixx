@@ -7,7 +7,7 @@
 }
 
 :root {
-  --color-primary: #020d18;
+  --color-primary: linear-gradient(to bottom, #011121, #010101);
   --color-secondary: #f1c40f;
 }
 
@@ -143,7 +143,7 @@ ul {
 
 /* Footer */
 .main-footer {
-  background: #020d18;
+  background: black;
   padding: 20px 0;
   margin-top: 20px;
 }
