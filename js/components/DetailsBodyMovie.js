@@ -1,7 +1,7 @@
 import readableDate from "../utilities/date.js";
 import addCommasToNumber from "../utilities/addCommas.js";
 
-const detailsBody = (
+const detailsBodyMovie = (
     src,
     title, 
     releaseDate,  
@@ -50,4 +50,4 @@ const detailsBody = (
     <h4>Production Companies</h4>
     <div class="list-group">${companies}</div>
 `;
-export default detailsBody;
+export default detailsBodyMovie;

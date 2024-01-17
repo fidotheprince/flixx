@@ -1,7 +1,8 @@
 import config from "./config.js";
 import showCard from "./components/ShowCard.js";
 import movieCard from "./components/MovieCard.js";
-import detailsBody from "./components/DetailsBody.js";
+import detailsBodyTV from "./components/DetailsBodyTV.js";
+import detailsBodyMovie from "./components/DetailsBodyMovie.js";
 
 const global = {
     currentPage : window.location.pathname,
@@ -53,7 +54,7 @@ const displayBackdrop = async (backdropPath, element) => {
     element.style.backgroundSize = 'cover';
 }
 
-const displayMovieDetails = async (endpoint) => {
+const displayDetails = async (endpoint) => {
 
     const params = new URLSearchParams(window.location.search);
     const id = params.get('id');
@@ -74,9 +75,11 @@ const displayMovieDetails = async (endpoint) => {
         const queryString = `${config.API_URL}${endpoint}/${id}?api_key=${config.API_KEY}&language=en-US`
         const resp = await fetch(queryString)
         const details = await resp.json();
+        console.log(details);
         
         const src = details.poster_path ? `https://image.tmdb.org/t/p/w500${details.poster_path}` : 'images/no-image.jpg';
-        const parent = document.querySelector('#movie-details');
+        const selector = endpoint === 'movie' ? '#movie-details' : '#show-details';
+        const parent = document.querySelector(selector);
         const child = document.createElement('div');
         const ul = document.createElement('ul');
         ul.classList.add('list-group');
@@ -84,20 +87,43 @@ const displayMovieDetails = async (endpoint) => {
         const genres = details.genres.map(genre => `<li>${genre.name}</li>`).join('');
         const companies = details.production_companies.map(company => ` ${company.name}`);
 
-        child.innerHTML += detailsBody(
-            src, 
-            details.original_title, 
-            details.release_date, 
-            details.vote_average, 
-            details.overview, 
-            genres, 
-            details.homepage, 
-            details.budget, 
-            details.revenue, 
-            details.runtime, 
-            details.status, 
-            companies
-        );
+        let detailBody = undefined;
+
+        if (endpoint === 'movie') {
+            detailBody = detailsBodyMovie(
+                src, 
+                details.title, 
+                details.release_date, 
+                details.vote_average, 
+                details.overview, 
+                genres, 
+                details.homepage, 
+                details.budget, 
+                details.revenue,
+                details.runtime,
+                details.status, 
+                companies
+            );
+        }
+
+        if (endpoint === 'tv') {
+            detailBody = detailsBodyTV(
+                src, 
+                details.name, 
+                details.first_air_date, 
+                details.vote_average, 
+                details.overview, 
+                genres, 
+                details.homepage, 
+                details.number_of_episodes, 
+                details.number_of_seasons,
+                details.status, 
+                companies
+            );
+        }
+    
+
+        child.innerHTML += detailBody;
 
         displayBackdrop(details.backdrop_path, document.querySelector('body'));
 
@@ -140,10 +166,10 @@ const init = () => {
             renderShows();
             break;
         case '/movie-details.html':
-            displayMovieDetails('movie');  
+            displayDetails('movie');  
             break;
         case '/tv-details.html':
-            console.log('TV Details Page');
+            displayDetails('tv');
             break;
         case '/search.html':
             console.log('Search Page');
