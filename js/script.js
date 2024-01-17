@@ -116,7 +116,7 @@ const displayDetails = async (endpoint) => {
                 genres, 
                 details.homepage, 
                 details.number_of_episodes, 
-                details.number_of_seasons,
+                details.last_episode_to_air.name,
                 details.status, 
                 companies
             );

@@ -31,7 +31,7 @@ const detailsBodyMovie = (
         </p>
         <p class="text-muted">Release Date: ${readableDate(releaseDate)}</p>
         <p>
-            ${overview} / 10
+            ${overview}
         </p>
         <h5>Genres</h5>
         ${genres}
