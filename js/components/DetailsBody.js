@@ -1,4 +1,5 @@
 import readableDate from "../utilities/date.js";
+import addCommasToNumber from "../utilities/addCommas.js";
 
 const detailsBody = (
     src,
@@ -40,14 +41,13 @@ const detailsBody = (
     <div class="details-bottom">
     <h2>Movie Info</h2>
     <ul>
-    <li><span class="text-secondary">Budget:</span> ${budget}</li>
-    <li><span class="text-secondary">Revenue:</span> ${revenue}</li>
-    <li><span class="text-secondary">${revenue < budget ? 'Loss:' : 'Proft:'}</span> ${revenue - budget}</li>
+    <li><span class="text-secondary">Budget:</span> $ ${addCommasToNumber(budget)}</li>
+    <li><span class="text-secondary">Revenue:</span> $ ${addCommasToNumber(revenue)}</li>
+    <li><span class="text-secondary">${revenue < budget ? 'Loss:' : 'Proft:'}</span> $ ${addCommasToNumber(revenue - budget)}</li>
     <li><span class="text-secondary">Runtime:</span> ${runtime}</li>
     <li><span class="text-secondary">Status:</span> ${status}</li>
     </ul>
     <h4>Production Companies</h4>
     <div class="list-group">${companies}</div>
 `;
-
 export default detailsBody;

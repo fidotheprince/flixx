@@ -47,6 +47,12 @@ const renderShows = async () => {
     });
 }
 
+const displayBackdrop = async (backdropPath, element) => {
+    const imageUrl = `https://image.tmdb.org/t/p/original${backdropPath}`;
+    element.style.backgroundImage = `linear-gradient(to right, rgba(0,0,0,0.9), rgba(0,0,0,0.6)), url(${imageUrl})`;
+    element.style.backgroundSize = 'cover';
+}
+
 const displayMovieDetails = async (endpoint) => {
 
     const params = new URLSearchParams(window.location.search);
@@ -92,6 +98,8 @@ const displayMovieDetails = async (endpoint) => {
             details.status, 
             companies
         );
+
+        displayBackdrop(details.backdrop_path, document.querySelector('body'));
 
         parent.appendChild(child);
     } catch (error) {
