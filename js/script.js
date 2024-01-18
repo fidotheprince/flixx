@@ -83,7 +83,7 @@ const renderShows = async () => {
     results.forEach(show => {
         console.log(show)
         const src = show.poster_path ? `https://image.tmdb.org/t/p/w500${show.poster_path}` : 'images/no-image.jpg';
-        const parent = document.querySelector('#popular-shows');
+        const parent = document.querySelector('#popular-sßhows');
         const child = document.createElement('div');
         child.classList.add('card');
         const cardBody = showCard(show.name, show.first_air_date, src, show.id);
@@ -91,6 +91,15 @@ const renderShows = async () => {
         parent.appendChild(child);
     });
 }
+
+const displaySearchResults = async (endpoint, query) => {
+    //grab type and query from url
+    console.log(window.location.search)
+    const q = `${config.API_URL}search/${endpoint}?query=${query}&api_key=${config.API_KEY}&language=en-US}`;
+    const resp = await fetch(q)
+    const data = await resp.json();
+    return data;
+};
 
 const displayBackdrop = async (backdropPath, element) => {
     const imageUrl = `https://image.tmdb.org/t/p/original${backdropPath}`;
@@ -216,7 +225,7 @@ const init = () => {
             displayDetails('tv');
             break;
         case '/search.html':
-            console.log('Search Page');
+            displaySearchResults('movie', 'spiderman');
             break; 
     }
 
