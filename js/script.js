@@ -1,12 +1,38 @@
 import config from "./config.js";
 import showCard from "./components/ShowCard.js";
 import movieCard from "./components/MovieCard.js";
+import swiperSlide from "./components/SwiperSlide.js";
 import detailsBodyTV from "./components/DetailsBodyTV.js";
 import detailsBodyMovie from "./components/DetailsBodyMovie.js";
 
 const global = {
     currentPage : window.location.pathname,
 };
+
+const swiperOptions = {
+    slidePerView: 1,
+    spaceBetween: 10,
+    freeMode: true,
+    loop: true,
+    autoplay: {
+        delay: 5000,
+        disableOnInteraction: false,
+    },
+    breakpoints: {
+        500: {
+            slidesPerView: 2,
+            spaceBetween: 10,
+        },
+        700: {
+            slidesPerView: 3,
+            spaceBetween: 10,
+        },
+        1000: {
+            slidesPerView: 4,
+            spaceBetween: 10,
+        },
+    }
+}
 
 //Fetch data from TMBD API
 const fetchFromTMBD = async (endpoint) => {
@@ -15,6 +41,24 @@ const fetchFromTMBD = async (endpoint) => {
     const data = await resp.json();
     hideSpinner();
     return data;
+
+}
+
+const displaySlider = async () => {
+    const { results } = await fetchFromTMBD('movie/now_playing');
+    const parent = document.querySelector('.swiper-wrapper');
+    let src = undefined;
+
+    results.forEach(movie => {
+        src = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'images/no-image.jpg';
+        parent.innerHTML += swiperSlide(movie.id, src, movie.original_title, movie.vote_average);
+    });
+
+    const initSlider = () => {
+        const swiper = new Swiper('.swiper', swiperOptions);
+    };
+    
+    initSlider();
 
 }
 
@@ -75,7 +119,6 @@ const displayDetails = async (endpoint) => {
         const queryString = `${config.API_URL}${endpoint}/${id}?api_key=${config.API_KEY}&language=en-US`
         const resp = await fetch(queryString)
         const details = await resp.json();
-        console.log(details);
         
         const src = details.poster_path ? `https://image.tmdb.org/t/p/w500${details.poster_path}` : 'images/no-image.jpg';
         const selector = endpoint === 'movie' ? '#movie-details' : '#show-details';
@@ -161,6 +204,7 @@ const init = () => {
         case '/':
         case '/index.html':
             renderMovies();
+            displaySlider();
             break;
         case '/shows.html':
             renderShows();
