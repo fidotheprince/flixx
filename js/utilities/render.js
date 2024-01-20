@@ -1,3 +1,4 @@
+import paginationButtons from '../components/PaginationButtons.js';
 import detailsBodyMovie from '../components/DetailsBodyMovie.js';
 import detailsBodyTV from '../components/DetailsBodyTV.js';
 import movieCard from '../components/MovieCard.js';
@@ -90,7 +91,11 @@ const render = {
         displayBackdrop(details.backdrop_path, document.querySelector('body'));
 
         parent.appendChild(child);
+    },
+    pagination : (page, totalPages) => {
+        paginationButtons(page, totalPages);
     }
+
 }
 
 export default render;

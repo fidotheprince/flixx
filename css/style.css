@@ -326,6 +326,10 @@ section h2 {
   margin-top: 10px;
 }
 
+#prev, #next {
+  border: 2px solid var(--color-secondary);
+}
+
 /* Alert */
 #alert {
   padding: 10px 20px;

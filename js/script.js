@@ -49,8 +49,13 @@ const fetchFromTMBD = async (endpoint) => {
 
 };
 
-const searchFromTMBD = async (type, searchTerm) => {
-    const query = `${config.API_URL}search/${type}?query=${searchTerm}&api_key=${config.API_KEY}&language=en-US}`;
+const searchFromTMBD = async (type, searchTerm, page) => {
+    
+    if (!page) {
+        page = 1;
+    }
+
+    const query = `${config.API_URL}search/${type}?query=${searchTerm}&api_key=${config.API_KEY}&language=en-US&page=${page}}`;
     const resp = await fetch(query)
     const data = await resp.json();
     console.log(data);
@@ -109,11 +114,14 @@ const displaySearchResults = async () => {
     const params = new URLSearchParams(window.location.search);
     const searchTerm = params.get('search-term');
     const type = params.get('type');
+    const p = params.get('page');
+
+    console.log(p)
     
     if(!searchTerm){
         alertRed('No search term provided');
     } else {
-        const { results, total_pages, page, total_results } = await searchFromTMBD(type, searchTerm);
+        const { results, total_pages, page, total_results } = await searchFromTMBD(type, searchTerm, p);
 
         global.search.type = type;
         global.search.term = searchTerm;
@@ -128,8 +136,12 @@ const displaySearchResults = async () => {
 
         //can be seperated into its own method
         document.querySelector('#search-results-heading').innerHTML = `
-         <h1 style="padding-bottom: 20px;">${results.length} of ${global.search.totalResults} Results </h1>
+            <h1 style="padding-bottom: 20px; text-align: center;">
+                ${results.length} of ${global.search.totalResults} Results
+            </h1>
         `;
+
+        render.pagination(global.search.page, global.search.totalPages);
     }
 
 };
