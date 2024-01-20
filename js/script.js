@@ -1,13 +1,17 @@
 import config from "./config.js";
 import render from "./utilities/render.js";
-import showCard from "./components/ShowCard.js";
-import movieCard from "./components/MovieCard.js";
 import swiperSlide from "./components/SwiperSlide.js";
-import detailsBodyTV from "./components/DetailsBodyTV.js";
-import detailsBodyMovie from "./components/DetailsBodyMovie.js";
+
 
 const global = {
     currentPage : window.location.pathname,
+    search: {
+        type: '',
+        term: '',
+        page: 1, 
+        totalPages: 0,
+        totalResults: 0
+    }
 };
 
 const swiperOptions = {
@@ -45,6 +49,14 @@ const fetchFromTMBD = async (endpoint) => {
 
 };
 
+const searchFromTMBD = async (type, searchTerm) => {
+    const query = `${config.API_URL}search/${type}?query=${searchTerm}&api_key=${config.API_KEY}&language=en-US}`;
+    const resp = await fetch(query)
+    const data = await resp.json();
+    console.log(data);
+    return data;
+};
+
 const displaySlider = async () => {
     const { results } = await fetchFromTMBD('movie/now_playing');
     const parent = document.querySelector('.swiper-wrapper');
@@ -73,14 +85,53 @@ const renderShows = async () => {
     render.shows(results);
 };
 
-const displaySearchResults = async (endpoint) => {
+const alertRed = (message) => {
+    const alert = document.querySelector('#alert');
+    alert.style.display = 'block';
+    alert.style.backgroundColor = 'red';
+    alert.innerHTML = message;
+    setTimeout(() => {
+        alert.style.display = 'none';
+    }, 3000);
+}
+
+const alertGreen = (message) => {
+    const alert = document.querySelector('#alert');
+    alert.style.display = 'block';
+    alert.style.backgroundColor = 'green';
+    alert.innerHTML = message;
+    setTimeout(() => {
+        alert.style.display = 'none';
+    }, 3000);
+}
+
+const displaySearchResults = async () => {
     const params = new URLSearchParams(window.location.search);
     const searchTerm = params.get('search-term');
-    const query = `${config.API_URL}search/${endpoint}?query=${searchTerm}&api_key=${config.API_KEY}&language=en-US}`;
-    const resp = await fetch(query)
-    const data = await resp.json();
-    const { results } = data;
-    render.search(results, endpoint);
+    const type = params.get('type');
+    
+    if(!searchTerm){
+        alertRed('No search term provided');
+    } else {
+        const { results, total_pages, page, total_results } = await searchFromTMBD(type, searchTerm);
+
+        global.search.type = type;
+        global.search.term = searchTerm;
+        global.search.page = page;
+        global.search.totalPages = total_pages;
+        global.search.totalResults = total_results;
+
+        console.log(global.search)
+
+        results.length < 1 && alertGreen('No results found');
+        render.search(results, type);
+
+        //can be seperated into its own method
+        document.querySelector('#search-results-heading').innerHTML = `
+         <h1 style="padding-bottom: 20px;">${results.length} of ${global.search.totalResults} Results </h1>
+        `;
+    }
+
 };
 
 const displayBackdrop = async (backdropPath, element) => {
@@ -157,7 +208,7 @@ const init = () => {
             displayDetails('tv');
             break;
         case '/search.html':
-            displaySearchResults('movie');
+            displaySearchResults();
             break; 
     }
 

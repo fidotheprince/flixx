@@ -327,17 +327,8 @@ section h2 {
 }
 
 /* Alert */
-.alert {
-  background: red;
+#alert {
   padding: 10px 20px;
   margin-bottom: 20px;
   border-radius: 5px;
-}
-
-.alert-success {
-  background: green;
-}
-
-.alert-error {
-  background: red;
 }

@@ -27,13 +27,13 @@ const render = {
             parent.appendChild(child);
         });
     },
-    search : (results, endpoint) => {
+    search : (results, type) => {
         results.forEach(result => {
             const src = result.poster_path ? `https://image.tmdb.org/t/p/w500${result.poster_path}` : 'images/no-image.jpg';
             const parent = document.querySelector('#search-results');
             const child = document.createElement('div');
             child.classList.add('card');
-            const cardBody = endpoint === 'movie' ? movieCard(result.title, result.release_date, src, result.id) : showCard(result.name, result.first_air_date, src, result.id);
+            const cardBody = type === 'movie' ? movieCard(result.title, result.release_date, src, result.id) : showCard(result.name, result.first_air_date, src, result.id);
             child.innerHTML += cardBody;
             parent.appendChild(child);
         });
