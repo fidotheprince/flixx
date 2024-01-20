@@ -1,4 +1,4 @@
-const paginationButtons = (page, totalPages) => {
+const paginationButtons = (page, totalPages, emptyResults) => {
 
     const next = page + 1;
     const prev = page - 1;
@@ -20,10 +20,15 @@ const paginationButtons = (page, totalPages) => {
         prevButton.style.color = 'grey';
     }
 
+    const disableAllButtons = () => { 
+        disableNextButton();
+        disablePrevButton();
+    }  
+
+    emptyResults ? disableAllButtons() : null;
     page === totalPages ? disableNextButton() : nextButton.disabled = false;
     page === 1 ? disablePrevButton() : prevButton.disabled = false;
 
-    
     const seeNextPage = (e) => {
         let url = new URL(window.location.href);
         let params = url.searchParams;
@@ -39,13 +44,11 @@ const paginationButtons = (page, totalPages) => {
         url.search = params.toString(); 
         window.location.href = url.toString();
     }
-
     
     h2.innerHTML = `Page ${page} of ${totalPages}`;
 
     nextButton.addEventListener('click', seeNextPage);
     prevButton.addEventListener('click', seePrevPage);
-
 
     buttonContainer.appendChild(h2);
 

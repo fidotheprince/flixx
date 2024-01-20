@@ -1,3 +1,4 @@
+import innerResultsHeading from '../components/InnerResultsHeading.js';
 import paginationButtons from '../components/PaginationButtons.js';
 import detailsBodyMovie from '../components/DetailsBodyMovie.js';
 import detailsBodyTV from '../components/DetailsBodyTV.js';
@@ -92,10 +93,9 @@ const render = {
 
         parent.appendChild(child);
     },
-    pagination : (page, totalPages) => {
-        paginationButtons(page, totalPages);
+    pagination : (page, totalPages, emptyResults) => {
+        paginationButtons(page, totalPages, emptyResults);
     }
-
 }
 
 export default render;

@@ -1,6 +1,7 @@
 import config from "./config.js";
 import render from "./utilities/render.js";
 import swiperSlide from "./components/SwiperSlide.js";
+import innerResultsHeading from "./components/InnerResultsHeading.js";
 
 
 const global = {
@@ -116,32 +117,27 @@ const displaySearchResults = async () => {
     const type = params.get('type');
     const p = params.get('page');
 
-    console.log(p)
+    if(Number(p) === 0) {
+        window.location.href = `search.html?search-term=${searchTerm}&type=${type}&page=1`;
+    }
     
     if(!searchTerm){
         alertRed('No search term provided');
     } else {
         const { results, total_pages, page, total_results } = await searchFromTMBD(type, searchTerm, p);
+        const emptyResults = results.length < 1;
 
         global.search.type = type;
         global.search.term = searchTerm;
         global.search.page = page;
         global.search.totalPages = total_pages;
         global.search.totalResults = total_results;
-
-        console.log(global.search)
-
-        results.length < 1 && alertGreen('No results found');
+        emptyResults && alertGreen('No results found');
         render.search(results, type);
 
-        //can be seperated into its own method
-        document.querySelector('#search-results-heading').innerHTML = `
-            <h1 style="padding-bottom: 20px; text-align: center;">
-                ${results.length} of ${global.search.totalResults} Results
-            </h1>
-        `;
-
-        render.pagination(global.search.page, global.search.totalPages);
+        document.querySelector('#search-results-heading').innerHTML = innerResultsHeading(results, total_results);
+        
+        render.pagination(global.search.page, global.search.totalPages, emptyResults);
     }
 
 };
