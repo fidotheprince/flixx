@@ -1,4 +1,5 @@
 import config from "./config.js";
+import render from "./utilities/render.js";
 import showCard from "./components/ShowCard.js";
 import movieCard from "./components/MovieCard.js";
 import swiperSlide from "./components/SwiperSlide.js";
@@ -32,7 +33,7 @@ const swiperOptions = {
             spaceBetween: 10,
         },
     }
-}
+};
 
 //Fetch data from TMBD API
 const fetchFromTMBD = async (endpoint) => {
@@ -42,7 +43,7 @@ const fetchFromTMBD = async (endpoint) => {
     hideSpinner();
     return data;
 
-}
+};
 
 const displaySlider = async () => {
     const { results } = await fetchFromTMBD('movie/now_playing');
@@ -60,52 +61,33 @@ const displaySlider = async () => {
     
     initSlider();
 
-}
+};
 
 const renderMovies = async () => {
     const { results } = await fetchFromTMBD('movie/popular');
-
-    results.forEach(movie => {
-        const src = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'images/no-image.jpg';
-        const parent = document.querySelector('#popular-movies');
-        const child = document.createElement('div');
-        child.classList.add('card');
-        const cardBody = movieCard(movie.title, movie.release_date, src, movie.id);
-        child.innerHTML += cardBody;
-        parent.appendChild(child);
-
-    });
-}
+    render.movies(results);
+};
 
 const renderShows = async () => {
     const { results } = await fetchFromTMBD('tv/popular');
-    
-    results.forEach(show => {
-        console.log(show)
-        const src = show.poster_path ? `https://image.tmdb.org/t/p/w500${show.poster_path}` : 'images/no-image.jpg';
-        const parent = document.querySelector('#popular-sßhows');
-        const child = document.createElement('div');
-        child.classList.add('card');
-        const cardBody = showCard(show.name, show.first_air_date, src, show.id);
-        child.innerHTML += cardBody;
-        parent.appendChild(child);
-    });
-}
+    render.shows(results);
+};
 
-const displaySearchResults = async (endpoint, query) => {
-    //grab type and query from url
-    console.log(window.location.search)
-    const q = `${config.API_URL}search/${endpoint}?query=${query}&api_key=${config.API_KEY}&language=en-US}`;
-    const resp = await fetch(q)
+const displaySearchResults = async (endpoint) => {
+    const params = new URLSearchParams(window.location.search);
+    const searchTerm = params.get('search-term');
+    const query = `${config.API_URL}search/${endpoint}?query=${searchTerm}&api_key=${config.API_KEY}&language=en-US}`;
+    const resp = await fetch(query)
     const data = await resp.json();
-    return data;
+    const { results } = data;
+    render.search(results, endpoint);
 };
 
 const displayBackdrop = async (backdropPath, element) => {
     const imageUrl = `https://image.tmdb.org/t/p/original${backdropPath}`;
     element.style.backgroundImage = `linear-gradient(to right, rgba(0,0,0,0.9), rgba(0,0,0,0.6)), url(${imageUrl})`;
     element.style.backgroundSize = 'cover';
-}
+};
 
 const displayDetails = async (endpoint) => {
 
@@ -128,58 +110,8 @@ const displayDetails = async (endpoint) => {
         const queryString = `${config.API_URL}${endpoint}/${id}?api_key=${config.API_KEY}&language=en-US`
         const resp = await fetch(queryString)
         const details = await resp.json();
-        
-        const src = details.poster_path ? `https://image.tmdb.org/t/p/w500${details.poster_path}` : 'images/no-image.jpg';
-        const selector = endpoint === 'movie' ? '#movie-details' : '#show-details';
-        const parent = document.querySelector(selector);
-        const child = document.createElement('div');
-        const ul = document.createElement('ul');
-        ul.classList.add('list-group');
-        
-        const genres = details.genres.map(genre => `<li>${genre.name}</li>`).join('');
-        const companies = details.production_companies.map(company => ` ${company.name}`);
+        render.details(details, endpoint, displayBackdrop);
 
-        let detailBody = undefined;
-
-        if (endpoint === 'movie') {
-            detailBody = detailsBodyMovie(
-                src, 
-                details.title, 
-                details.release_date, 
-                details.vote_average, 
-                details.overview, 
-                genres, 
-                details.homepage, 
-                details.budget, 
-                details.revenue,
-                details.runtime,
-                details.status, 
-                companies
-            );
-        }
-
-        if (endpoint === 'tv') {
-            detailBody = detailsBodyTV(
-                src, 
-                details.name, 
-                details.first_air_date, 
-                details.vote_average, 
-                details.overview, 
-                genres, 
-                details.homepage, 
-                details.number_of_episodes, 
-                details.last_episode_to_air.name,
-                details.status, 
-                companies
-            );
-        }
-    
-
-        child.innerHTML += detailBody;
-
-        displayBackdrop(details.backdrop_path, document.querySelector('body'));
-
-        parent.appendChild(child);
     } catch (error) {
         console.error(error);
     }
@@ -225,7 +157,7 @@ const init = () => {
             displayDetails('tv');
             break;
         case '/search.html':
-            displaySearchResults('movie', 'spiderman');
+            displaySearchResults('movie');
             break; 
     }
 
@@ -237,4 +169,3 @@ const init = () => {
 document.addEventListener('DOMContentLoaded', init);
 
  
-
