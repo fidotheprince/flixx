@@ -45,7 +45,6 @@ const generateBaseUrl = () => {
     return localhost ? 'http://127.0.0.1:3000/' : window.location.origin;
 }
 
-//Fetch data from TMBD API
 const fetchFromTMBD = async (endpoint) => {
     showSpinner(); 
     const baseUrl = generateBaseUrl();
@@ -57,8 +56,16 @@ const fetchFromTMBD = async (endpoint) => {
 
 };
 
-const searchFromTMBD = async (type, searchTerm, page) => {
-    
+const fetchDetailsFromTMBD = async (endpoint, id) => {
+    const baseUrl = generateBaseUrl();
+    const url = `${baseUrl}details/${endpoint}/${id}`;
+    const resp = await fetch(url)
+    const data = await resp.json();
+
+    return data;
+}
+
+const searchFromTMBD = async (type, searchTerm, page) => {    
     if (!page) {
         page = 1;
     }
@@ -174,10 +181,7 @@ const displayDetails = async (endpoint) => {
     }
 
     try {
-        //need to replace details call with new method
-        const queryString = `${config.API_URL}${endpoint}/${id}?api_key=${config.API_KEY}&language=en-US`
-        const resp = await fetch(queryString)
-        const details = await resp.json();
+        const details = await fetchDetailsFromTMBD(endpoint, id);
         render.details(details, endpoint, displayBackdrop);
 
     } catch (error) {
