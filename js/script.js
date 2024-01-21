@@ -40,13 +40,16 @@ const swiperOptions = {
     }
 };
 
+const generateBaseUrl = () => {
+    const localhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    return localhost ? 'http://127.0.0.1:3000/' : window.location.origin;
+}
+
 //Fetch data from TMBD API
 const fetchFromTMBD = async (endpoint) => {
     showSpinner(); 
-
-    const localhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    let baseUrl = localhost ? 'http://127.0.0.1:3000/' : window.location.origin;
-    const url = `${baseUrl}tmdb/${endpoint}`;
+    const baseUrl = generateBaseUrl();
+    const url = `${baseUrl}resource/${endpoint}`;
     const resp = await fetch(url)
     const data = await resp.json();
     hideSpinner();
@@ -60,10 +63,11 @@ const searchFromTMBD = async (type, searchTerm, page) => {
         page = 1;
     }
 
-    const query = `${config.API_URL}search/${type}?query=${searchTerm}&api_key=${config.API_KEY}&language=en-US&page=${page}}`;
-    const resp = await fetch(query)
+    const baseUrl = generateBaseUrl();
+    const url = `${baseUrl}search/${type}?query=${searchTerm}&page=${page}`;
+    const resp = await fetch(url)
     const data = await resp.json();
-    console.log(data);
+
     return data;
 };
 
@@ -170,6 +174,7 @@ const displayDetails = async (endpoint) => {
     }
 
     try {
+        //need to replace details call with new method
         const queryString = `${config.API_URL}${endpoint}/${id}?api_key=${config.API_KEY}&language=en-US`
         const resp = await fetch(queryString)
         const details = await resp.json();
