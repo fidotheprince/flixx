@@ -40,9 +40,9 @@ const swiperOptions = {
     }
 };
 
+//Change to swap between local and remote API
 const generateBaseUrl = () => {
-    const localhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    return localhost ? 'http://127.0.0.1:3000/' : window.location.origin;
+    return 'https://flixx-api-4ea54960865d.herokuapp.com/'
 }
 
 const fetchFromTMBD = async (endpoint) => {
@@ -164,22 +164,9 @@ const displayBackdrop = async (backdropPath, element) => {
 };
 
 const displayDetails = async (endpoint) => {
-
     const params = new URLSearchParams(window.location.search);
     const id = params.get('id');
     
-    const parameters = {
-        id: id, 
-        API_KEY: config.API_KEY, 
-        API_URL: config.API_URL, 
-        endpoint: endpoint
-    };
-
-    if (!id || !config.API_KEY || !config.API_URL || !endpoint) {
-        console.error({message: 'Missing required parameters', parameters});
-        return;
-    }
-
     try {
         const details = await fetchDetailsFromTMBD(endpoint, id);
         render.details(details, endpoint, displayBackdrop);
