@@ -1,4 +1,4 @@
-import config from "./config.js";
+// import config from "./config.js";
 import render from "./utilities/render.js";
 import swiperSlide from "./components/SwiperSlide.js";
 import innerResultsHeading from "./components/InnerResultsHeading.js";
