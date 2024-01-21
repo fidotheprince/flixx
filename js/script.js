@@ -43,7 +43,11 @@ const swiperOptions = {
 //Fetch data from TMBD API
 const fetchFromTMBD = async (endpoint) => {
     showSpinner(); 
-    const resp = await fetch(`${config.API_URL}${endpoint}?api_key=${config.API_KEY}&language=en-US`)
+
+    const localhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    let baseUrl = localhost ? 'http://127.0.0.1:3000/' : window.location.origin;
+    const url = `${baseUrl}tmdb/${endpoint}`;
+    const resp = await fetch(url)
     const data = await resp.json();
     hideSpinner();
     return data;
