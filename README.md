@@ -1,6 +1,6 @@
 # Secured Flixx Movie App 🍿
 
-Cloned and improved Flixx, a movie search and rating website; the original site is from Brad Traversy, and is used as a tool to teach students. Accordingly, the original application had a security vulnerability that exposed API credentials to network clients. This project aims to fix the vulnerability by creating a backend server, you can view the server code [here](https://github.com/fidotheprince/flixx-api), that will act as a proxy to the original API. The backend server will be responsible for making requests to the original API and returning the data to the client. The client will make requests to the backend server instead of the original API.
+Cloned and improved Flixx, a movie search and rating website; the original site is from Brad Traversy, and is used as a tool to teach students. Accordingly, the original application had a security vulnerability that exposed API credentials to network clients. This project aims to fix the vulnerability by creating a backend server, and improving the client applications request code. You can view the server code [here](https://github.com/fidotheprince/flixx-api), that will act as a proxy to the original API. The backend server will be responsible for making requests to the original API and returning the data to the client. The client will make requests to the backend server instead of the original API.
 
 # Swapped Client API API Requests to Backend Server
 
